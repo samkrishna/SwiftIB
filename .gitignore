@@ -16,6 +16,8 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+*.xcsettings
+SwiftIB.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 
 # CocoaPods
 #
