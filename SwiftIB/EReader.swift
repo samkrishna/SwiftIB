@@ -29,49 +29,50 @@ class EReader: Thread {
 
     // incoming msg id's
     enum MsgIdEnum: Int {
-        case tick_PRICE     = 1
-        case tick_SIZE      = 2
-        case order_STATUS   = 3
-        case err_MSG        = 4
-        case open_ORDER         = 5
-        case acct_VALUE         = 6
-        case portfolio_VALUE    = 7
-        case acct_UPDATE_TIME   = 8
-        case next_VALID_ID      = 9
-        case contract_DATA      = 10
-        case execution_DATA     = 11
-        case market_DEPTH       = 12
-        case market_DEPTH_L2    = 13
-        case news_BULLETINS     = 14
-        case managed_ACCTS      = 15
-        case receive_FA         = 16
-        case historical_DATA    = 17
-        case bond_CONTRACT_DATA = 18
-        case scanner_PARAMETERS = 19
-        case scanner_DATA       = 20
-        case tick_OPTION_COMPUTATION = 21
-        case tick_GENERIC = 45
-        case tick_STRING = 46
-        case tick_EFP = 47
-        case current_TIME = 49
-        case real_TIME_BARS = 50
-        case fundamental_DATA = 51
-        case contract_DATA_END = 52
-        case open_ORDER_END = 53
-        case acct_DOWNLOAD_END = 54
-        case execution_DATA_END = 55
-        case delta_NEUTRAL_VALIDATION = 56
-        case tick_SNAPSHOT_END = 57
-        case market_DATA_TYPE = 58
-        case commission_REPORT = 59
-        case position = 61
-        case position_END = 62
-        case account_SUMMARY = 63
-        case account_SUMMARY_END = 64
-        case verify_MESSAGE_API = 65
-        case verify_COMPLETED = 66
-        case display_GROUP_LIST = 67
-        case display_GROUP_UPDATED = 68
+        case tick_PRICE                 = 1
+        case tick_SIZE                  = 2
+        case order_STATUS               = 3
+        case err_MSG                    = 4
+        case open_ORDER                 = 5
+        case acct_VALUE                 = 6
+        case portfolio_VALUE            = 7
+        case acct_UPDATE_TIME           = 8
+        case next_VALID_ID              = 9
+        case contract_DATA              = 10
+        case execution_DATA             = 11
+        case market_DEPTH               = 12
+        case market_DEPTH_L2            = 13
+        case news_BULLETINS             = 14
+        case managed_ACCTS              = 15
+        case receive_FA                 = 16
+        case historical_DATA            = 17
+        case bond_CONTRACT_DATA         = 18
+        case scanner_PARAMETERS         = 19
+        case scanner_DATA               = 20
+        case tick_OPTION_COMPUTATION    = 21
+        case tick_GENERIC               = 45
+        case tick_STRING                = 46
+        case tick_EFP                   = 47
+        case current_TIME               = 49
+        case real_TIME_BARS             = 50
+        case fundamental_DATA           = 51
+        case contract_DATA_END          = 52
+        case open_ORDER_END             = 53
+        case acct_DOWNLOAD_END          = 54
+        case execution_DATA_END         = 55
+        case delta_NEUTRAL_VALIDATION   = 56
+        case tick_SNAPSHOT_END          = 57
+        case market_DATA_TYPE           = 58
+        case commission_REPORT          = 59
+        case position                   = 61
+        case position_END               = 62
+        case account_SUMMARY            = 63
+        case account_SUMMARY_END        = 64
+        case verify_MESSAGE_API         = 65
+        case verify_COMPLETED           = 66
+        case display_GROUP_LIST         = 67
+        case display_GROUP_UPDATED      = 68
+        case UNKNOWN                    = 666
     }
 
     var _parent: EClientSocket
@@ -129,28 +130,28 @@ class EReader: Thread {
     
     func readInt() -> Int {
         let str = readStr()
-        if str.utf16.count == 0 {return 0}
+        if str.utf16.count == 0 { return 0 }
         else if let i = Int(str) { return i }
-        else {return 0}
+        else { return 0 }
     }
     
     func readIntMax() -> Int {
         let str = readStr()
-        if str.utf16.count == 0 {return Int.max}
+        if str.utf16.count == 0 { return Int.max }
         else if let i = Int(str) { return i }
-        else {return Int.max}
+        else { return Int.max }
     }
     
     func readLong() -> Int64 {
         let str = readStr()
-        if str.utf16.count == 0 {return 0}
+        if str.utf16.count == 0 { return 0 }
         let ni = NSString(string: str)
         return ni.longLongValue
     }
     
     func readDouble() -> Double {
         let str = readStr()
-        if str.utf16.count == 0 {return 0}
+        if str.utf16.count == 0 { return 0 }
         let ni = NSString(string: str)
         return ni.doubleValue
     }
@@ -200,17 +201,16 @@ class EReader: Thread {
                 }
                 
             case .tick_SIZE:
-                let version = readInt()
+                let _ = readInt()
                 let tickerId = readInt()
                 let tickType = readInt()
                 let size = readInt()
-                
                 self.eWrapper.tickSize(tickerId, field: tickType, size: size)
                 
             case .position:
                 let version = readInt()
                 let account = readStr()
-                
+
                 let contract = Contract()
                 contract.conId = readInt()
                 contract.symbol = readStr()
@@ -235,11 +235,11 @@ class EReader: Thread {
                 self.eWrapper.position(account, contract: contract, pos: pos, avgCost: avgCost)
                 
             case .position_END:
-                let version = readInt()
+                let _ = readInt()
                 self.eWrapper.positionEnd()
                 
             case .account_SUMMARY:
-                let version = readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 let account = readStr()
                 let tag = readStr()
@@ -248,7 +248,7 @@ class EReader: Thread {
                 self.eWrapper.accountSummary(reqId, account: account, tag: tag, value: value, currency: currency)
                 
             case .account_SUMMARY_END:
-                let version = readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 self.eWrapper.accountSummaryEnd(reqId)
                 
@@ -302,7 +302,7 @@ class EReader: Thread {
                 self.eWrapper.tickOptionComputation(tickerId, field: tickType, impliedVol: impliedVol, delta: delta, optPrice: optPrice, pvDividend:pvDividend, gamma: gamma, vega: vega, theta: theta, undPrice: undPrice)
                 
             case .tick_GENERIC:
-                let version = readInt()
+                let _ = readInt()
                 let tickerId = readInt()
                 let tickType = readInt()
                 let value = readDouble()
@@ -310,7 +310,7 @@ class EReader: Thread {
                 self.eWrapper.tickGeneric(tickerId, tickType: tickType, value: value)
                 
             case .tick_STRING:
-                let version = readInt()
+                let _ = readInt()
                 let tickerId = readInt()
                 let tickType = readInt()
                 let value = readStr()
@@ -318,7 +318,7 @@ class EReader: Thread {
                 self.eWrapper.tickString(tickerId, tickType: tickType, value: value)
                 
             case .tick_EFP:
-                let version = readInt()
+                let _ = readInt()
                 let tickerId = readInt()
                 let tickType = readInt()
                 let basisPoints = readDouble()
@@ -340,32 +340,40 @@ class EReader: Thread {
                 let avgFillPrice = readDouble()
                 
                 var permId = 0
-                if( version >= 2) {
+                if (version >= 2) {
                     permId = readInt()
                 }
                 
                 var parentId = 0
-                if( version >= 3) {
+                if (version >= 3) {
                     parentId = readInt()
                 }
                 
                 var lastFillPrice = 0.0
-                if( version >= 4) {
+                if (version >= 4) {
                     lastFillPrice = readDouble()
                 }
                 
                 var clientId = 0
-                if( version >= 5) {
+                if (version >= 5) {
                     clientId = readInt()
                 }
                 
                 var whyHeld = ""
-                if( version >= 6) {
+                if (version >= 6) {
                     whyHeld = readStr()
                 }
                 
-                self.eWrapper.orderStatus(id, status: status, filled: filled, remaining: remaining, avgFillPrice: avgFillPrice,
-                    permId: permId, parentId: parentId, lastFillPrice: lastFillPrice, clientId: clientId, whyHeld: whyHeld)
+                self.eWrapper.orderStatus(id,
+                                          status: status,
+                                          filled: filled,
+                                          remaining: remaining,
+                                          avgFillPrice: avgFillPrice,
+                                          permId: permId,
+                                          parentId: parentId,
+                                          lastFillPrice: lastFillPrice,
+                                          clientId: clientId,
+                                          whyHeld: whyHeld)
                 
             case .acct_VALUE:
                 let version = readInt()
@@ -373,7 +381,7 @@ class EReader: Thread {
                 let val  = readStr()
                 let cur = readStr()
                 var accountName = ""
-                if( version >= 2) {
+                if (version >= 2) {
                     accountName = readStr()
                 }
                 self.eWrapper.updateAccountValue(key, value: val, currency: cur, accountName: accountName)
@@ -414,7 +422,7 @@ class EReader: Thread {
                 }
                 
                 var accountName = ""
-                if( version >= 4) {
+                if (version >= 4) {
                     accountName = readStr()
                 }
                 
@@ -422,21 +430,27 @@ class EReader: Thread {
                     contract.primaryExch = readStr()
                 }
                 
-                self.eWrapper.updatePortfolio(contract, position: position, marketPrice: marketPrice, marketValue: marketValue,
-                    averageCost: averageCost, unrealizedPNL: unrealizedPNL, realizedPNL: realizedPNL, accountName: accountName)
-                
-                
+                self.eWrapper.updatePortfolio(contract,
+                                              position: position,
+                                              marketPrice: marketPrice,
+                                              marketValue: marketValue,
+                                              averageCost: averageCost,
+                                              unrealizedPNL: unrealizedPNL,
+                                              realizedPNL: realizedPNL,
+                                              accountName: accountName)
+
             case .acct_UPDATE_TIME:
-                let version = readInt()
+                let _ = readInt()
                 let timeStamp = readStr()
                 self.eWrapper.updateAccountTime(timeStamp)
                 
             case .err_MSG:
                 let version = readInt()
-                if(version < 2) {
+                if (version < 2) {
                     let msg = readStr()
                     _parent.error(-1, errorCode: -1, errorMsg: msg)
-                } else {
+                }
+                else {
                     let id = readInt()
                     let errorCode    = readInt()
                     let errorMsg = readStr()
@@ -496,15 +510,15 @@ class EReader: Thread {
                 order.origin = readInt()
                 order.orderRef = readStr()
                 
-                if(version >= 3) {
+                if (version >= 3) {
                     order.clientId = readInt()
                 }
                 
-                if( version >= 4 ) {
+                if (version >= 4) {
                     order.permId = readInt()
                     if (version < 18) {
                         // will never happen
-                        /* order.ignoreRth = */ readBoolFromInt()
+                        let _ = readBoolFromInt()
                     }
                     else {
                         order.outsideRth = readBoolFromInt()
@@ -519,7 +533,7 @@ class EReader: Thread {
                 
                 if (version >= 6 ) {
                     // skip deprecated sharesAllocation field
-                    readStr()
+                    let _ = readStr()
                 }
                 
                 if (version >= 7 ) {
@@ -540,7 +554,7 @@ class EReader: Thread {
                     order.shortSaleSlot = readInt()
                     order.designatedLocation = readStr()
                     if (_parent.serverVersion() == 51) {
-                        readInt() // exemptCode
+                        let _ = readInt() // exemptCode
                     }
                     else if (version >= 23) {
                         order.exemptCode = readInt()
@@ -554,7 +568,7 @@ class EReader: Thread {
                     order.displaySize = readInt()
                     if (version < 18) {
                         // will never happen
-                        /* order.rthOnly = */ readBoolFromInt()
+                        let _ = readBoolFromInt()
                     }
                     order.blockOrder = readBoolFromInt()
                     order.sweepToFill = readBoolFromInt()
@@ -577,7 +591,9 @@ class EReader: Thread {
                     if (version == 11) {
                         let receivedInt = readInt()
                         order.deltaNeutralOrderType = ((receivedInt == 0) ? "NONE" : "MKT" )
-                    } else { // version 12 and up
+                    }
+                    // version 12 and up
+                    else {
                         order.deltaNeutralOrderType = readStr()
                         order.deltaNeutralAuxPrice = readDoubleMax()
                         
@@ -621,7 +637,8 @@ class EReader: Thread {
                     let comboLegsCount = readInt()
                     if (comboLegsCount > 0) {
                         contract.comboLegs = [ComboLeg]()
-                        for i in 1...comboLegsCount {
+
+                        for _ in 1...comboLegsCount {
                             let conId = readInt()
                             let ratio = readInt()
                             let action = readStr()
@@ -631,7 +648,14 @@ class EReader: Thread {
                             let designatedLocation = readStr()
                             let exemptCode = readInt()
                             
-                            let comboLeg = ComboLeg(p_conId: conId, p_ratio: ratio, p_action: action, p_exchange: exchange, p_openClose: openClose, p_shortSaleSlot: shortSaleSlot, p_designatedLocation: designatedLocation, p_exemptCode: exemptCode)
+                            let comboLeg = ComboLeg(p_conId: conId,
+                                                    p_ratio: ratio,
+                                                    p_action: action,
+                                                    p_exchange: exchange,
+                                                    p_openClose: openClose,
+                                                    p_shortSaleSlot: shortSaleSlot,
+                                                    p_designatedLocation: designatedLocation,
+                                                    p_exemptCode: exemptCode)
                             contract.comboLegs.append(comboLeg)
                         }
                     }
@@ -639,9 +663,8 @@ class EReader: Thread {
                     let orderComboLegsCount = readInt()
                     if (orderComboLegsCount > 0) {
                         order.orderComboLegs = [OrderComboLeg]()
-                        for i in 1...orderComboLegsCount {
+                        for _ in 1...orderComboLegsCount {
                             let price = readDoubleMax()
-                            
                             let orderComboLeg = OrderComboLeg(p_price: price)
                             order.orderComboLegs.append(orderComboLeg)
                         }
@@ -652,7 +675,8 @@ class EReader: Thread {
                     let smartComboRoutingParamsCount = readInt()
                     if (smartComboRoutingParamsCount > 0) {
                         order.smartComboRoutingParams = [TagValue]()
-                        for i in 1...smartComboRoutingParamsCount {
+
+                        for _ in 1...smartComboRoutingParamsCount {
                             let tagValue = TagValue()
                             tagValue.tag = readStr()
                             tagValue.value = readStr()
@@ -667,7 +691,7 @@ class EReader: Thread {
                         order.scaleSubsLevelSize = readIntMax()
                     }
                     else {
-                        /* let notSuppScaleNumComponents = */ readIntMax()
+                        let _ = readIntMax()
                         order.scaleInitLevelSize = readIntMax()
                     }
                     order.scalePriceIncrement = readDoubleMax()
@@ -719,7 +743,8 @@ class EReader: Thread {
                         let algoParamsCount = readInt()
                         if (algoParamsCount > 0) {
                             order.algoParams = [TagValue]()
-                            for i in 1...algoParamsCount {
+
+                            for _ in 1...algoParamsCount {
                                 let tagValue = TagValue()
                                 tagValue.tag = readStr()
                                 tagValue.value = readStr()
@@ -729,12 +754,18 @@ class EReader: Thread {
                     }
                 }
                 
-                let orderState = OrderState(p_status: "", p_initMargin: "", p_maintMargin: "", p_equityWithLoan: "", p_commission: 0, p_minCommission: 0, p_maxCommission: 0, p_commissionCurrency: "", p_warningText: "")
+                let orderState = OrderState(p_status: "",
+                                            p_initMargin: "",
+                                            p_maintMargin: "",
+                                            p_equityWithLoan: "",
+                                            p_commission: 0,
+                                            p_minCommission: 0,
+                                            p_maxCommission: 0,
+                                            p_commissionCurrency: "",
+                                            p_warningText: "")
                 
                 if (version >= 16) {
-                    
                     order.whatIf = readBoolFromInt()
-                    
                     orderState.status = readStr()
                     orderState.initMargin = readStr()
                     orderState.maintMargin = readStr()
@@ -746,23 +777,43 @@ class EReader: Thread {
                     orderState.warningText = readStr()
                 }
                 
-                self.eWrapper.openOrder( order.orderId, contract: contract, order: order, orderState: orderState)
+                self.eWrapper.openOrder(order.orderId,
+                                        contract: contract,
+                                        order: order,
+                                        orderState: orderState)
                 
             case .next_VALID_ID:
-                let version = readInt()
+                let _ = readInt()
                 let orderId = readInt()
                 self.eWrapper.nextValidId( orderId)
                 
             case .scanner_DATA:
-                let contract = ContractDetails(p_summary: Contract(), p_marketName: "", p_minTick: 0, p_orderTypes: "", p_validExchanges: "", p_underConId: 0, p_longName: "", p_contractMonth: "", p_industry: "", p_category: "", p_subcategory: "", p_timeZoneId: "", p_tradingHours: "", p_liquidHours: "", p_evRule: "", p_evMultiplier: 0)
+                let contract = ContractDetails(p_summary: Contract(),
+                                               p_marketName: "",
+                                               p_minTick: 0,
+                                               p_orderTypes: "",
+                                               p_validExchanges: "",
+                                               p_underConId: 0,
+                                               p_longName: "",
+                                               p_contractMonth: "",
+                                               p_industry: "",
+                                               p_category: "",
+                                               p_subcategory: "",
+                                               p_timeZoneId: "",
+                                               p_tradingHours: "",
+                                               p_liquidHours: "",
+                                               p_evRule: "",
+                                               p_evMultiplier: 0)
                 let version = readInt()
                 let tickerId = readInt()
                 let numberOfElements = readInt()
-                for i in 1...numberOfElements {
+
+                for _ in 1...numberOfElements {
                     let rank = readInt()
                     if (version >= 3) {
                         contract.summary.conId = readInt()
                     }
+
                     contract.summary.symbol = readStr()
                     contract.summary.secType = readStr()
                     contract.summary.expiry = readStr()
@@ -780,8 +831,13 @@ class EReader: Thread {
                     if (version >= 2) {
                         legsStr = readStr()
                     }
-                    self.eWrapper.scannerData(tickerId, rank: rank, contractDetails: contract, distance: distance,
-                        benchmark: benchmark, projection: projection, legsStr: legsStr)
+                    self.eWrapper.scannerData(tickerId,
+                                              rank: rank,
+                                              contractDetails: contract,
+                                              distance: distance,
+                                              benchmark: benchmark,
+                                              projection: projection,
+                                              legsStr: legsStr)
                 }
                 self.eWrapper.scannerDataEnd(tickerId)
                 
@@ -793,7 +849,22 @@ class EReader: Thread {
                     reqId = readInt()
                 }
                 
-                let contract = ContractDetails(p_summary: Contract(), p_marketName: "", p_minTick: 0, p_orderTypes: "", p_validExchanges: "", p_underConId: 0, p_longName: "", p_contractMonth: "", p_industry: "", p_category: "", p_subcategory: "", p_timeZoneId: "", p_tradingHours: "", p_liquidHours: "", p_evRule: "", p_evMultiplier: 0)
+                let contract = ContractDetails(p_summary: Contract(),
+                                               p_marketName: "",
+                                               p_minTick: 0,
+                                               p_orderTypes: "",
+                                               p_validExchanges: "",
+                                               p_underConId: 0,
+                                               p_longName: "",
+                                               p_contractMonth: "",
+                                               p_industry: "",
+                                               p_category: "",
+                                               p_subcategory: "",
+                                               p_timeZoneId: "",
+                                               p_tradingHours: "",
+                                               p_liquidHours: "",
+                                               p_evRule: "",
+                                               p_evMultiplier: 0)
                 contract.summary.symbol = readStr()
                 contract.summary.secType = readStr()
                 contract.summary.expiry = readStr()
@@ -815,11 +886,11 @@ class EReader: Thread {
                 if (version >= 4) {
                     contract.underConId = readInt()
                 }
-                if( version >= 5) {
+                if (version >= 5) {
                     contract.longName = readStr()
                     contract.summary.primaryExch = readStr()
                 }
-                if( version >= 6) {
+                if (version >= 6) {
                     contract.contractMonth = readStr()
                     contract.industry = readStr()
                     contract.category = readStr()
@@ -836,7 +907,8 @@ class EReader: Thread {
                     let secIdListCount = readInt()
                     if (secIdListCount  > 0) {
                         contract.secIdList = [TagValue]()
-                        for i in 1...secIdListCount {
+
+                        for _ in 1...secIdListCount {
                             let tagValue = TagValue()
                             tagValue.tag = readStr()
                             tagValue.value = readStr()
@@ -846,15 +918,30 @@ class EReader: Thread {
                 }
                 
                 self.eWrapper.contractDetails(reqId, contractDetails: contract)
+
             case .bond_CONTRACT_DATA:
                 let version = readInt()
-                
                 var reqId = -1
                 if (version >= 3) {
                     reqId = readInt()
                 }
                 
-                let contract = ContractDetails(p_summary: Contract(), p_marketName: "", p_minTick: 0, p_orderTypes: "", p_validExchanges: "", p_underConId: 0, p_longName: "", p_contractMonth: "", p_industry: "", p_category: "", p_subcategory: "", p_timeZoneId: "", p_tradingHours: "", p_liquidHours: "", p_evRule: "", p_evMultiplier: 0)
+                let contract = ContractDetails(p_summary: Contract(),
+                                               p_marketName: "",
+                                               p_minTick: 0,
+                                               p_orderTypes: "",
+                                               p_validExchanges: "",
+                                               p_underConId: 0,
+                                               p_longName: "",
+                                               p_contractMonth: "",
+                                               p_industry: "",
+                                               p_category: "",
+                                               p_subcategory: "",
+                                               p_timeZoneId: "",
+                                               p_tradingHours: "",
+                                               p_liquidHours: "",
+                                               p_evRule: "",
+                                               p_evMultiplier: 0)
                 
                 contract.summary.symbol = readStr()
                 contract.summary.secType = readStr()
@@ -877,13 +964,14 @@ class EReader: Thread {
                 contract.minTick = readDouble()
                 contract.orderTypes = readStr()
                 contract.validExchanges = readStr()
+
                 if (version >= 2) {
                     contract.nextOptionDate = readStr()
                     contract.nextOptionType = readStr()
                     contract.nextOptionPartial = readBoolFromInt()
                     contract.notes = readStr()
                 }
-                if( version >= 4) {
+                if (version >= 4) {
                     contract.longName = readStr()
                 }
                 if (version >= 6) {
@@ -894,7 +982,8 @@ class EReader: Thread {
                     let secIdListCount = readInt()
                     if (secIdListCount  > 0) {
                         contract.secIdList = [TagValue]()
-                        for i in 1...secIdListCount {
+
+                        for _ in 1...secIdListCount {
                             let tagValue = TagValue()
                             tagValue.tag = readStr()
                             tagValue.value = readStr()
@@ -904,10 +993,11 @@ class EReader: Thread {
                 }
                 
                 self.eWrapper.bondContractDetails(reqId, contractDetails: contract)
+
             case .execution_DATA:
                 let version = readInt()
-                
                 var reqId = -1
+
                 if (version >= 7) {
                     reqId = readInt()
                 }
@@ -934,7 +1024,22 @@ class EReader: Thread {
                     contract.tradingClass = readStr()
                 }
                 
-                let exec = Execution(p_orderId: 0, p_clientId: 0, p_execId: "", p_time: "", p_acctNumber: "", p_exchange: "", p_side: "", p_shares: 0, p_price: 0, p_permId: 0, p_liquidation: 0, p_cumQty: 0, p_avgPrice: 0, p_orderRef: "", p_evRule: "", p_evMultiplier: 0)
+                let exec = Execution(p_orderId: 0,
+                                     p_clientId: 0,
+                                     p_execId: "",
+                                     p_time: "",
+                                     p_acctNumber: "",
+                                     p_exchange: "",
+                                     p_side: "",
+                                     p_shares: 0,
+                                     p_price: 0,
+                                     p_permId: 0,
+                                     p_liquidation: 0,
+                                     p_cumQty: 0,
+                                     p_avgPrice: 0,
+                                     p_orderRef: "",
+                                     p_evRule: "",
+                                     p_evMultiplier: 0)
                 exec.orderId = orderId
                 exec.execId = readStr()
                 exec.time = readStr()
@@ -943,7 +1048,8 @@ class EReader: Thread {
                 exec.side = readStr()
                 exec.shares = readInt()
                 exec.price = readDouble()
-                if (version >= 2 ) {
+
+                if (version >= 2) {
                     exec.permId = readInt()
                 }
                 if (version >= 3) {
@@ -965,21 +1071,26 @@ class EReader: Thread {
                 }
                 
                 self.eWrapper.execDetails( reqId, contract: contract, execution: exec)
+
             case .market_DEPTH:
-                let version = readInt()
+                let _ = readInt()
                 let id = readInt()
-                
                 let position = readInt()
                 let operation = readInt()
                 let side = readInt()
                 let price = readDouble()
                 let size = readInt()
                 
-                self.eWrapper.updateMktDepth(id, position: position, operation: operation, side: side, price: price, size: size)
+                self.eWrapper.updateMktDepth(id,
+                                             position: position,
+                                             operation: operation,
+                                             side: side,
+                                             price: price,
+                                             size: size)
+
             case .market_DEPTH_L2:
-                let version = readInt()
+                let _ = readInt()
                 let id = readInt()
-                
                 let position = readInt()
                 let marketMaker = readStr()
                 let operation = readInt()
@@ -987,39 +1098,52 @@ class EReader: Thread {
                 let price = readDouble()
                 let size = readInt()
                 
-                self.eWrapper.updateMktDepthL2(id, position: position, marketMaker: marketMaker, operation: operation, side: side, price: price, size: size)
+                self.eWrapper.updateMktDepthL2(id,
+                                               position: position,
+                                               marketMaker: marketMaker,
+                                               operation: operation,
+                                               side: side,
+                                               price: price,
+                                               size: size)
+
             case .news_BULLETINS:
-                let version = readInt()
+                let _ = readInt()
                 let newsMsgId = readInt()
                 let newsMsgType = readInt()
                 let newsMessage = readStr()
                 let originatingExch = readStr()
-                
-                self.eWrapper.updateNewsBulletin( newsMsgId, msgType: newsMsgType, message: newsMessage, origExchange: originatingExch)
+
+                self.eWrapper.updateNewsBulletin(newsMsgId,
+                                                 msgType: newsMsgType,
+                                                 message: newsMessage,
+                                                 origExchange: originatingExch)
+
             case .managed_ACCTS:
-                let version = readInt()
+                let _ = readInt()
                 let accountsList = readStr()
-                
-                self.eWrapper.managedAccounts( accountsList)
+                self.eWrapper.managedAccounts(accountsList)
+
             case .receive_FA:
-                let version = readInt()
+                let _ = readInt()
                 let faDataType = readInt()
                 let xml = readStr()
-                
                 self.eWrapper.receiveFA(faDataType, xml: xml)
+
             case .historical_DATA:
                 let version = readInt()
                 let reqId = readInt()
                 var startDateStr = ""
                 var endDateStr = ""
                 var completedIndicator = "finished"
+
                 if (version >= 2) {
                     startDateStr = readStr()
                     endDateStr = readStr()
                     completedIndicator += "-\(startDateStr)-\(endDateStr)"
                 }
                 let itemCount = readInt()
-                for i in 1...itemCount {
+
+                for _ in 1...itemCount {
                     let date = readStr()
                     let open = readDouble()
                     let high = readDouble()
@@ -1032,21 +1156,41 @@ class EReader: Thread {
                     if (version >= 3) {
                         barCount = readInt()
                     }
-                    self.eWrapper.historicalData(reqId, date: date, open: open, high: high, low: low,
-                        close: close, volume: volume, count: barCount, WAP: WAP, hasGaps: hasGaps)
+                    self.eWrapper.historicalData(reqId,
+                                                 date: date,
+                                                 open: open,
+                                                 high: high,
+                                                 low: low,
+                                                 close: close,
+                                                 volume: volume,
+                                                 count: barCount,
+                                                 WAP: WAP,
+                                                 hasGaps: hasGaps)
                 }
                 // send end of dataset marker
-                self.eWrapper.historicalData(reqId, date: completedIndicator, open: -1, high: -1, low: -1, close: -1, volume: -1, count: -1, WAP: -1, hasGaps: false)
+                self.eWrapper.historicalData(reqId,
+                                             date: completedIndicator,
+                                             open: -1,
+                                             high: -1,
+                                             low: -1,
+                                             close: -1,
+                                             volume: -1,
+                                             count: -1,
+                                             WAP: -1,
+                                             hasGaps: false)
+
             case .scanner_PARAMETERS:
-                let version = readInt()
+                let _ = readInt()
                 let xml = readStr()
                 self.eWrapper.scannerParameters(xml)
+
             case .current_TIME:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let time = readLong()
                 self.eWrapper.currentTime(time)
+
             case .real_TIME_BARS:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 let time = readLong()
                 let open = readDouble()
@@ -1056,51 +1200,63 @@ class EReader: Thread {
                 let volume = readLong()
                 let wap = readDouble()
                 let count = readInt()
-                self.eWrapper.realtimeBar(reqId, time: time, open: open, high: high, low: low, close: close, volume: volume, wap: wap, count: count)
+                self.eWrapper.realtimeBar(reqId,
+                                          time: time,
+                                          open: open,
+                                          high: high,
+                                          low: low,
+                                          close: close,
+                                          volume: volume,
+                                          wap: wap,
+                                          count: count)
+
             case .fundamental_DATA:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 let data = readStr()
                 self.eWrapper.fundamentalData(reqId, data: data)
+
             case .contract_DATA_END:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 self.eWrapper.contractDetailsEnd(reqId)
+
             case .open_ORDER_END:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 self.eWrapper.openOrderEnd()
+
             case .acct_DOWNLOAD_END:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let accountName = readStr()
                 self.eWrapper.accountDownloadEnd( accountName)
+
             case .execution_DATA_END:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 self.eWrapper.execDetailsEnd( reqId)
+
             case .delta_NEUTRAL_VALIDATION:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
-                
                 let underComp = UnderComp()
                 underComp.conId = readInt()
                 underComp.delta = readDouble()
                 underComp.price = readDouble()
-                
                 self.eWrapper.deltaNeutralValidation(reqId, underComp: underComp)
+
             case .tick_SNAPSHOT_END:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
-                
                 self.eWrapper.tickSnapshotEnd( reqId)
+
             case .market_DATA_TYPE:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 let marketDataType = readInt()
-                
                 self.eWrapper.marketDataType( reqId, marketDataType: marketDataType)
+
             case .commission_REPORT:
-                /*int version =*/ readInt()
-                
+                let _ = readInt()
                 let commissionReport = CommissionReport()
                 commissionReport.execId = readStr()
                 commissionReport.commission = readDouble()
@@ -1108,43 +1264,42 @@ class EReader: Thread {
                 commissionReport.realizedPNL = readDouble()
                 commissionReport.yield = readDouble()
                 commissionReport.yieldRedemptionDate = readInt()
-                
                 self.eWrapper.commissionReport(commissionReport)
+
             case .verify_MESSAGE_API:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let apiData = readStr()
-                
                 self.eWrapper.verifyMessageAPI(apiData)
+
             case .verify_COMPLETED:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let isSuccessfulStr = readStr()
                 let isSuccessful = "true" == isSuccessfulStr
                 let errorText = readStr()
-                
-                
+
                 if (isSuccessful) {
                     _parent.startAPI()
                 }
                 
                 self.eWrapper.verifyCompleted(isSuccessful, errorText: errorText)
+
             case .display_GROUP_LIST:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 let groups = readStr()
-                
                 self.eWrapper.displayGroupList(reqId, groups: groups)
+
             case .display_GROUP_UPDATED:
-                /*int version =*/ readInt()
+                let _ = readInt()
                 let reqId = readInt()
                 let contractInfo = readStr()
-                
                 self.eWrapper.displayGroupUpdated(reqId, contractInfo: contractInfo)
-
             default:
                 self.parent.error(EClientErrors_NO_VALID_ID, errorCode: EClientErrors_UNKNOWN_ID.code, errorMsg: EClientErrors_UNKNOWN_ID.msg)
                 return false
             }
-        } else { return false}
+        }
+        else { return false }
         return true
     }
 }

@@ -31,6 +31,7 @@ class MarketDataType {
     enum MarketDataEnum: Int {
         case realtime = 1
         case frozen = 2
+        case unknown = 666
     }
     
     class func getField(_ marketDataType: Int) -> String {        
