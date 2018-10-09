@@ -193,9 +193,22 @@ while true {
     client.eConnect(host, p_port: port)
     connected = true
     for i in 0 ..< tickers.count {
-        let con = Contract(p_conId: 0, p_symbol: tickers[i], p_secType: "STK", p_expiry: "", p_strike: 0.0, p_right: "", p_multiplier: "",
-            p_exchange: "SMART", p_currency: "USD", p_localSymbol: tickers[i], p_tradingClass: "", p_comboLegs: nil, p_primaryExch: "ISLAND",
-            p_includeExpired: true, p_secIdType: "", p_secId: "")
+        let con = Contract(p_conId: 0,
+                           p_symbol: tickers[i],
+                           p_secType: "STK",
+                           p_expiry: "",
+                           p_strike: 0.0,
+                           p_right: "",
+                           p_multiplier: "",
+                           p_exchange: "SMART",
+                           p_currency: "USD",
+                           p_localSymbol: tickers[i],
+                           p_tradingClass: "",
+                           p_comboLegs: nil,
+                           p_primaryExch: "ISLAND",
+                           p_includeExpired: true,
+                           p_secIdType: "",
+                           p_secId: "")
         // tickerId is strickly 0..<tickers.count
         client.reqMktData(i, contract: con, genericTickList: "", snapshot: false, mktDataOptions: nil)
     }

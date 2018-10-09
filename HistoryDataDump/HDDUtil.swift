@@ -54,17 +54,17 @@ struct HDDConfig {
         for arg in arg_array[1..<arg_array.count] {
             switch arg {
             case "--host":
-                if index+1<arg_array.count {self.host = arg_array[index+1]}
+                if index + 1 < arg_array.count {self.host = arg_array[index+1]}
                 argValue[index+1] = true
             case "--port":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     if let p = Int(arg_array[index+1]) {
                         self.port = UInt32(p)
                     }
                 }
                 argValue[index+1] = true
             case "--rth":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     if let p = Int(arg_array[index+1]) {
                         self.rth = p == 0 ? 0 : 1
                     } else {
@@ -73,27 +73,27 @@ struct HDDConfig {
                 }
                 argValue[index+1] = true
             case "--until":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     self.untilDatetime = arg_array[index+1]
                 }
                 argValue[index+1] = true
             case "--since":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     self.sinceDatetime = arg_array[index+1]
                 }
                 argValue[index+1] = true
             case "--barsize":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     self.barsize = arg_array[index+1]
                 }
                 argValue[index+1] = true
             case "--duration":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     self.duration = arg_array[index+1]
                 }
                 argValue[index+1] = true
             case "--exchange":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     let ex = arg_array[index+1]
                     let exs = ex.components(separatedBy: ":")
                     if exs.count >= 2 { self.primaryEx = exs[1] }
@@ -101,10 +101,10 @@ struct HDDConfig {
                 }
                 argValue[index+1] = true
             case "--output":
-                if index+1<arg_array.count { self.outputDir = arg_array[index+1] }
+                if index + 1 < arg_array.count { self.outputDir = arg_array[index+1] }
                 argValue[index+1] = true
             case "--symbols":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     let fileCont = try! String(contentsOfFile: arg_array[index+1], encoding: String.Encoding.utf8)
                     let arr = fileCont.components(separatedBy: "\n")
                     for sym in arr {
@@ -115,7 +115,7 @@ struct HDDConfig {
                 }
                 argValue[index+1] = true
             case "--sleep":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     let sd = NSString(string: arg_array[index+1]).doubleValue
                     if sd != 0 {
                         self.sleepInterval = sd
@@ -123,7 +123,7 @@ struct HDDConfig {
                 }
                 argValue[index+1] = true
             case "--day-start":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     self.dayStart = arg_array[index+1]
                 }
                 argValue[index+1] = true
@@ -132,7 +132,7 @@ struct HDDConfig {
             case "--no-normal-filename":
                 self.normal_filename = false
             case "--clientID":
-                if index+1<arg_array.count {
+                if index + 1 < arg_array.count {
                     let iv = Int(arg_array[index+1])
                     if iv != nil {
                         self.clientID = iv!

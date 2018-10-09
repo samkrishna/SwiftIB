@@ -53,7 +53,16 @@ func getLastestDate(filename: String) -> Int64 {
     return ret
 }
 
-func downloadHistoryData(filename: String, ticker: String, requestId: Int, append: Bool = false, secType: String = "STK", currency: String = "USD", multiplier: String = "", expire: String = "", exchange: String = "SMART", pexchange: String = "ISLAND") {
+func downloadHistoryData(filename: String,
+                         ticker: String,
+                         requestId: Int,
+                         append: Bool = false,
+                         secType: String = "STK",
+                         currency: String = "USD",
+                         multiplier: String = "",
+                         expire: String = "",
+                         exchange: String = "SMART",
+                         pexchange: String = "ISLAND") {
     var loc = ticker
     var wts = "TRADES"
     if exchange == "IDEALPRO" {
@@ -63,10 +72,24 @@ func downloadHistoryData(filename: String, ticker: String, requestId: Int, appen
     if (conf.sleepInterval < 20.0) && (wts == "BID_ASK") {
         conf.sleepInterval = 20.0
     }
-    let con = Contract(p_conId: 0, p_symbol: ticker, p_secType: secType, p_expiry: expire, p_strike: 0.0, p_right: "", p_multiplier: multiplier,
-        p_exchange: exchange, p_currency: currency, p_localSymbol: loc, p_tradingClass: "", p_comboLegs: nil, p_primaryExch: pexchange,
-        p_includeExpired: false, p_secIdType: "", p_secId: "")
+
+    let con = Contract(p_conId: 0,
+                       p_symbol: ticker,
+                       p_secType: secType,
+                       p_expiry: expire,
+                       p_strike: 0.0,
+                       p_right: "",
+                       p_multiplier: multiplier,
+                       p_exchange: exchange,
+                       p_currency: currency,
+                       p_localSymbol: loc,
+                       p_tradingClass: "",
+                       p_comboLegs: nil,
+                       p_primaryExch: pexchange,
+                       p_includeExpired: false,
+                       p_secIdType: "", p_secId: "")
     var lf: FileHandle?
+
     if append {
         let next = getLastestDate(filename: filename)
         if next != -1 {
@@ -81,11 +104,14 @@ func downloadHistoryData(filename: String, ticker: String, requestId: Int, appen
         if lf != nil {
             lf?.seekToEndOfFile()
         }
-    } else {
+    }
+    else {
         fman.createFile(atPath: filename, contents: nil, attributes: nil)
         lf = FileHandle(forWritingAtPath: filename)
     }
+
     wrapper.currentTicker = ticker
+
     while wrapper.currentStart > wrapper.sinceTS {
         let begin = NSDate().timeIntervalSinceReferenceDate
         let localStart = wrapper.currentStart
@@ -94,15 +120,29 @@ func downloadHistoryData(filename: String, ticker: String, requestId: Int, appen
         wrapper.reqComplete = false
         wrapper.broken = false
         let sdt = conf.sinceDatetime.components(separatedBy: " ")[0]
-        if HDDUtil.equalsDaystart(timestamp: localStart, tz_name: wrapper.timezone, daystart: conf.dayStart, datestart: sdt) {
+        if HDDUtil.equalsDaystart(timestamp: localStart,
+                                  tz_name: wrapper.timezone,
+                                  daystart: conf.dayStart,
+                                  datestart: sdt) {
             print("(reaching day start \(conf.dayStart), continue next)")
             break
         }
         let ut = HDDUtil.tsToStr(timestamp: localStart, api: true, tz_name: wrapper.timezone)
-        client.reqHistoricalData(requestId, contract: con, endDateTime: "\(ut) \(wrapper.timezone)", durationStr: conf.duration, barSizeSetting: conf.barsize, whatToShow: wts, useRTH: conf.rth, formatDate: 2, chartOptions: nil)
+        client.reqHistoricalData(requestId,
+                                 contract: con,
+                                 endDateTime: "\(ut) \(wrapper.timezone)",
+                                 durationStr: conf.duration,
+                                 barSizeSetting: conf.barsize,
+                                 whatToShow: wts,
+                                 useRTH: conf.rth,
+                                 formatDate: 2,
+                                 chartOptions: nil)
         print("request (\(conf.duration)) (\(conf.barsize)) bars, until \(ut) \(wrapper.timezone)")
-        while (wrapper.reqComplete == false) && (wrapper.broken == false) && (wrapper.extraSleep <= 0.0)
-        { Thread.sleep(forTimeInterval: TimeInterval(0.05)) }
+
+        while (wrapper.reqComplete == false) && (wrapper.broken == false) && (wrapper.extraSleep <= 0.0) {
+            Thread.sleep(forTimeInterval: TimeInterval(0.05))
+        }
+
         if wrapper.broken {
             Thread.sleep(forTimeInterval: TimeInterval(2.0))
             wrapper.currentStart = localStart
@@ -111,6 +151,7 @@ func downloadHistoryData(filename: String, ticker: String, requestId: Int, appen
             wrapper.closing = false
             continue
         }
+
         if let file = lf {
             for c in wrapper.contents {
                 file.write(c.data(using: String.Encoding.utf8, allowLossyConversion: true)!)
@@ -119,6 +160,7 @@ func downloadHistoryData(filename: String, ticker: String, requestId: Int, appen
         }
         print("(sleep for \(conf.sleepInterval + wrapper.extraSleep) secs)...")
         Thread.sleep(until: NSDate(timeIntervalSinceReferenceDate: begin + conf.sleepInterval + wrapper.extraSleep) as Date)
+
         if wrapper.extraSleep > 0 {
             wrapper.currentStart = localStart
             wrapper.extraSleep = 0
@@ -166,14 +208,33 @@ for i in 0 ..< tickers.count {
     let fname = conf.normal_filename ? fn.replacingOccurrences(of: ":", with: "") : fn
     if fman.fileExists(atPath: fname) {
         if conf.append {
-            downloadHistoryData(filename: fname, ticker: ticker, requestId: i, append: true, secType: ins, currency: currency, multiplier: multiplier, expire: expire, exchange: ex, pexchange: pex)
+            downloadHistoryData(filename: fname,
+                                ticker: ticker,
+                                requestId: i,
+                                append: true,
+                                secType: ins,
+                                currency: currency,
+                                multiplier: multiplier,
+                                expire: expire,
+                                exchange: ex,
+                                pexchange: pex)
             continue
-        } else {
+        }
+        else {
             print("Skip \(ticker) : File exists")
             continue
         }
-    } else {
-        downloadHistoryData(filename: fname, ticker: ticker, requestId: i, secType: ins, currency: currency, multiplier: multiplier, expire: expire, exchange: ex, pexchange: pex)
+    }
+    else {
+        downloadHistoryData(filename: fname,
+                            ticker: ticker,
+                            requestId: i,
+                            secType: ins,
+                            currency: currency,
+                            multiplier: multiplier,
+                            expire: expire,
+                            exchange: ex,
+                            pexchange: pex)
     }
 }
 
